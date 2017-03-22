@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">AndroidAssignment</string>
+    <string name="distance_time">Distance</string>
+
 </resources>

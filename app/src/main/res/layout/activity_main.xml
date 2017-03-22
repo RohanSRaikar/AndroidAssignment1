@@ -10,8 +10,29 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="example.rohanraikar.com.androidassignment.MainActivity">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Hello World!" />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="From:"
+            android:id="@+id/TV_fromLocation"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/TV_fromLocation"
+            android:text="To :"
+            android:id="@+id/TV_toLocation"/>
+
+        <fragment
+            android:layout_width="match_parent"
+            android:name="com.google.android.gms.maps.SupportMapFragment"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/TV_toLocation"
+            android:id="@+id/map"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/TV_distanceTime"
+            android:layout_below="@id/map"
+            />
 </RelativeLayout>
