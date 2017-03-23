@@ -185,7 +185,7 @@ public class MyTracker extends Service implements LocationListener {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            Log.w("My Current location address", "Canont get Address!");
+            Log.w("My Current location address", "Cannot get Address!");
         }
         return strAdd;
     }

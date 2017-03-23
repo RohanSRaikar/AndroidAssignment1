@@ -1,5 +1,6 @@
 package example.rohanraikar.com.androidassignment;
 
+import android.app.ProgressDialog;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.AsyncTask;
@@ -42,7 +43,8 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     MyTracker tracker;
     LatLng latLng;
     double curLat,curlon;
-    String destAddress;
+    String destAddress,choice;
+    ProgressDialog progressDialog;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -50,7 +52,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         myStore=new TempStorage(getApplicationContext());
         tvDistanceDuration = (TextView) findViewById(R.id.TV_distanceTime);
         tvFrom=(TextView)findViewById(R.id.TV_fromLocation);
-        tvFrom.setText("From : "+myStore.getValueFromMystore("LocationData","myAddress"));
+        tvFrom.setText("FROM : "+myStore.getValueFromMystore("LocationData","myAddress"));
         tvTo=(TextView)findViewById(R.id.TV_toLocation);
         tracker=new MyTracker(getApplicationContext());
         // Initializing
@@ -170,10 +172,10 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                     String url = getDirectionsUrl(origin, dest);
                     DownloadTask downloadTask = new DownloadTask();
                     // Start downloading json data from Google Directions API
-                    downloadTask.execute(url);
+                    downloadTask.execute(url,"1");
                     DownloadTask downloadTask1 = new DownloadTask();
                     // Start downloading json data from Google Directions API
-                    downloadTask1.execute(url+"&mode=walking");
+                    downloadTask1.execute(url+"&mode=walking","2");
                 }
             }
         });
@@ -181,6 +183,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
     // Fetches data from url passed
     private class DownloadTask extends AsyncTask<String, Void, String> {
+
         // Downloading data in non-ui thread
         @Override
         protected String doInBackground(String... url) {
@@ -188,6 +191,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
             String data = "";
             try{
                 // Fetching the data from web service
+                choice=url[1];
                 data = downloadUrl(url[0]);
                 Log.d("Rohan","Received data:"+data);
                 }catch(Exception e){
@@ -202,14 +206,24 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
             super.onPostExecute(result);
             ParserTask parserTask = new ParserTask();
             // Invokes the thread for parsing the JSON data
-            parserTask.execute(result);
+            parserTask.execute(result,choice);
             }
         }
 
 
     /** A class to parse the Google Places in JSON format */
     private class ParserTask extends AsyncTask<String, Integer, List<List<HashMap<String,String>>> >{
-    // Parsing the data in non-ui thread
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            progressDialog = new ProgressDialog(MainActivity.this);
+            progressDialog.setCancelable(true);
+            progressDialog.setMessage("Fetching location....");
+            progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+            progressDialog.show();
+        }
+
+        // Parsing the data in non-ui thread
         @Override
         protected List<List<HashMap<String, String>>> doInBackground(String... jsonData) {
             JSONObject jObject;
@@ -227,6 +241,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         // Executes in UI thread, after the parsing process
          @Override
          protected void onPostExecute(List<List<HashMap<String, String>>> result) {
+
             ArrayList<LatLng> points = null;
             PolylineOptions lineOptions = null;
             MarkerOptions markerOptions = new MarkerOptions();
@@ -263,11 +278,16 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                 // Adding all the points in the route to LineOptions
                 lineOptions.addAll(points);
                 lineOptions.width(10);
-                lineOptions.color(Color.BLUE);
+                if(choice.equals("1")) {
+                    lineOptions.color(Color.BLUE);
+                }else if(choice.equals("2"))
+                {
+                    lineOptions.color(Color.GREEN);
+                }
              }
+             progressDialog.dismiss();
              tvTo.setText("TO : "+destAddress);
              tvDistanceDuration.setText("Distance:"+distance + ", Duration:"+duration);
-
              // Drawing polyline in the Google Map for the i-th route
              map.addPolyline(lineOptions);
          }
