@@ -274,7 +274,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                 }
                 // Adding all the points in the route to LineOptions
                 lineOptions.addAll(points);
-                lineOptions.width(15);
+                lineOptions.width(8);
                 lineOptions.color(Color.BLUE);
              }
              tvDistanceDuration.setText("Distance:"+distance + ", Duration:"+duration);
