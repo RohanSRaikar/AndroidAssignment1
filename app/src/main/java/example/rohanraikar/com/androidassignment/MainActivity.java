@@ -42,9 +42,10 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     TempStorage myStore;
     MyTracker tracker;
     LatLng latLng;
-    double curLat,curlon;
+    double curLat,curlon,newLat,newLon;
     String destAddress,choice;
     ProgressDialog progressDialog;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -216,11 +217,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            progressDialog = new ProgressDialog(MainActivity.this);
-            progressDialog.setCancelable(true);
-            progressDialog.setMessage("Fetching location....");
-            progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-            progressDialog.show();
+            Toast.makeText(getApplicationContext(),"Fetching Address, Please wait",Toast.LENGTH_LONG).show();
         }
 
         // Parsing the data in non-ui thread
@@ -239,6 +236,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
             return routes;
             }
         // Executes in UI thread, after the parsing process
+
          @Override
          protected void onPostExecute(List<List<HashMap<String, String>>> result) {
 
@@ -269,15 +267,18 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                         duration = (String)point.get("duration");
                         continue;
                     }
-                    double lat = Double.parseDouble(point.get("lat"));
-                    double lng = Double.parseDouble(point.get("lng"));
-                    destAddress=tracker.getCompleteAddressString(lat,lng);
-                    LatLng position = new LatLng(lat, lng);
+                    newLat = Double.parseDouble(point.get("lat"));
+                    newLon = Double.parseDouble(point.get("lng"));
+                    LatLng position = new LatLng(newLat, newLon);
                     points.add(position);
+                    //Creating a background method to fetch address of new location
+                    GetAddress getAddress=new GetAddress();
+                    getAddress.execute();
                 }
                 // Adding all the points in the route to LineOptions
                 lineOptions.addAll(points);
                 lineOptions.width(10);
+                lineOptions.color(Color.RED);
                 if(choice.equals("1")) {
                     lineOptions.color(Color.BLUE);
                 }else if(choice.equals("2"))
@@ -285,12 +286,27 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                     lineOptions.color(Color.GREEN);
                 }
              }
-             progressDialog.dismiss();
-             tvTo.setText("TO : "+destAddress);
+
+
              tvDistanceDuration.setText("Distance:"+distance + ", Duration:"+duration);
              // Drawing polyline in the Google Map for the i-th route
              map.addPolyline(lineOptions);
          }
+    }
+
+    protected class GetAddress extends AsyncTask<String,String,String>{
+
+        @Override
+        protected String doInBackground(String[] params) {
+            destAddress=tracker.getCompleteAddressString(newLat,newLon);
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+            tvTo.setText("TO : "+destAddress);
+        }
     }
 
 }
