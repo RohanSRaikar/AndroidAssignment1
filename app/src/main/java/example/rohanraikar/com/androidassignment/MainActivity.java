@@ -37,10 +37,12 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
     GoogleMap map;
     ArrayList<LatLng> markerPoints;
-    TextView tvDistanceDuration,tvFrom;
+    TextView tvDistanceDuration,tvFrom,tvTo;
     TempStorage myStore;
+    MyTracker tracker;
     LatLng latLng;
     double curLat,curlon;
+    String destAddress;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,6 +51,8 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         tvDistanceDuration = (TextView) findViewById(R.id.TV_distanceTime);
         tvFrom=(TextView)findViewById(R.id.TV_fromLocation);
         tvFrom.setText("From : "+myStore.getValueFromMystore("LocationData","myAddress"));
+        tvTo=(TextView)findViewById(R.id.TV_toLocation);
+        tracker=new MyTracker(getApplicationContext());
         // Initializing
         markerPoints = new ArrayList<LatLng>();
         // Getting reference to SupportMapFragment of the activity_main
@@ -155,9 +159,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                  */
                 if (markerPoints.size() == 0) {
                     options.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
-                }/* else if (markerPoints.size() == 2) {
-                    options.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
-                }*/
+                }
                 // Add new marker to the Google Map Android API V2
                 map.addMarker(options);
                 // Checks, whether start and end locations are captured
@@ -254,6 +256,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                     }
                     double lat = Double.parseDouble(point.get("lat"));
                     double lng = Double.parseDouble(point.get("lng"));
+                    destAddress=tracker.getCompleteAddressString(lat,lng);
                     LatLng position = new LatLng(lat, lng);
                     points.add(position);
                 }
@@ -262,7 +265,9 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                 lineOptions.width(10);
                 lineOptions.color(Color.BLUE);
              }
+             tvTo.setText("TO : "+destAddress);
              tvDistanceDuration.setText("Distance:"+distance + ", Duration:"+duration);
+
              // Drawing polyline in the Google Map for the i-th route
              map.addPolyline(lineOptions);
          }
