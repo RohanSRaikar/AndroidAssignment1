@@ -271,26 +271,18 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                     newLon = Double.parseDouble(point.get("lng"));
                     LatLng position = new LatLng(newLat, newLon);
                     points.add(position);
-                    //Creating a background method to fetch address of new location
-                    GetAddress getAddress=new GetAddress();
-                    getAddress.execute();
                 }
                 // Adding all the points in the route to LineOptions
                 lineOptions.addAll(points);
-                lineOptions.width(10);
-                lineOptions.color(Color.RED);
-                if(choice.equals("1")) {
-                    lineOptions.color(Color.BLUE);
-                }else if(choice.equals("2"))
-                {
-                    lineOptions.color(Color.GREEN);
-                }
+                lineOptions.width(15);
+                lineOptions.color(Color.BLUE);
              }
-
-
              tvDistanceDuration.setText("Distance:"+distance + ", Duration:"+duration);
              // Drawing polyline in the Google Map for the i-th route
              map.addPolyline(lineOptions);
+             //Creating a background method to fetch address of new location
+             GetAddress getAddress=new GetAddress();
+             getAddress.execute();
          }
     }
 
