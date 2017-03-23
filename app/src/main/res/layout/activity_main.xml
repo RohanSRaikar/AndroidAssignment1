@@ -22,17 +22,19 @@
             android:text="To :"
             android:id="@+id/TV_toLocation"/>
 
-        <fragment
-            android:layout_width="match_parent"
-            android:name="com.google.android.gms.maps.SupportMapFragment"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/TV_toLocation"
-            android:id="@+id/map"/>
-
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/TV_distanceTime"
-            android:layout_below="@id/map"
+            android:layout_below="@id/TV_toLocation"
             />
+
+        <fragment
+            android:layout_width="match_parent"
+            android:name="com.google.android.gms.maps.SupportMapFragment"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/TV_distanceTime"
+            android:id="@+id/map"/>
+
+
 </RelativeLayout>
