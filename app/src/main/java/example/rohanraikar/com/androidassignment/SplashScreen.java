@@ -2,9 +2,12 @@ package example.rohanraikar.com.androidassignment;
 
 import android.*;
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
@@ -48,6 +51,11 @@ public class SplashScreen extends AppCompatActivity {
                 .build();
         myStore = new TempStorage(getApplicationContext());
         trackeMe = new MyTracker(getApplicationContext());
+        if(isNetworkAvailable()){
+            Toast.makeText(getApplicationContext(),"No Internet Connectivity,Closing the app",Toast.LENGTH_LONG).show();
+            this.finish();
+
+        }
         if (trackeMe.canGetLocation()) {
             longitude = trackeMe.getLongitude();
             latitude = trackeMe.getLatitude();
@@ -80,15 +88,25 @@ public class SplashScreen extends AppCompatActivity {
             public void run() {
                 // This method will be executed once the timer is over
                 // Start your app main activity
+                System.exit(0);
                 Intent i = new Intent(SplashScreen.this, MainActivity.class);
                 startActivity(i);
-
                 // close this activity
                 finish();
             }
         }, 4000);
 
     }
+
+
+    private boolean isNetworkAvailable(){
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        Boolean b= activeNetworkInfo != null && activeNetworkInfo.isConnected();
+        return b;
+    }
+
 
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
