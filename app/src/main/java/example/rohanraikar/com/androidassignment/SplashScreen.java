@@ -51,10 +51,9 @@ public class SplashScreen extends AppCompatActivity {
                 .build();
         myStore = new TempStorage(getApplicationContext());
         trackeMe = new MyTracker(getApplicationContext());
-        if(isNetworkAvailable()){
+        if(!isNetworkAvailable()){
             Toast.makeText(getApplicationContext(),"No Internet Connectivity,Closing the app",Toast.LENGTH_LONG).show();
             this.finish();
-
         }
         if (trackeMe.canGetLocation()) {
             longitude = trackeMe.getLongitude();
