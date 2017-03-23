@@ -54,6 +54,7 @@ public class SplashScreen extends AppCompatActivity {
         if(!isNetworkAvailable()){
             Toast.makeText(getApplicationContext(),"No Internet Connectivity,Closing the app",Toast.LENGTH_LONG).show();
             this.finish();
+            System.exit(0);
         }
         if (trackeMe.canGetLocation()) {
             longitude = trackeMe.getLongitude();
@@ -87,7 +88,7 @@ public class SplashScreen extends AppCompatActivity {
             public void run() {
                 // This method will be executed once the timer is over
                 // Start your app main activity
-                System.exit(0);
+
                 Intent i = new Intent(SplashScreen.this, MainActivity.class);
                 startActivity(i);
                 // close this activity
